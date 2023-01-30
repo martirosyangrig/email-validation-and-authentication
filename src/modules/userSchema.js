@@ -13,7 +13,8 @@ const userSchema = new Schema({
         required: true
     },
     emailToken: {
-        type: String
+        type: String,
+        required: false
     },
     veryfied: {
         type: Boolean,

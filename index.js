@@ -4,8 +4,10 @@ const cookieParser = require("cookie-parser")
 const UserRouter = require("./src/routes/userSingup")
 const app = express();
 
-app.use(express.json());
+app.use(express.urlencoded({extended: false}))
 app.use(cookieParser())
+app.use(express.json());
+
 app.use("/", UserRouter)
 
 

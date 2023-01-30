@@ -1,10 +1,10 @@
 const User = require("../modules/userSchema");
-const emailValidator = require('deep-email-validator');
+const isEmailValid = require("../utils/isEmailValid")
 const createToken = require("../utils/createUserToken")
+const crypto = require("crypto")
 
-async function isEmailValid(email) {
-  return emailValidator.validate(email)
-}
+const transporter = require("../utils/nodemailer")
+
 
 class UserAuth {
 
@@ -22,11 +22,29 @@ class UserAuth {
             const user = new User({
                 email,
                 password,
+                emailToken: crypto.randomBytes(64).toString("hex"),
                 veryfied: false
             });
 
             const newUser = await user.save();
-            res.json(newUser);
+
+        //     const mailOptions = {
+        //         from: `"Veryfy your email" <grigorgrigor055@gmail.com>`,
+        //         to: user.email,
+        //         subject: "codewithsid -veryfy your email",
+        //         html: `<h2> thanks for ragister</h2>
+        //             <h4> Please verify your email to continue</h4>
+        //             <a href="http://${req.headers.host}/user/verify-email?token=${user.emailToken}">Verify</a>`
+        //     }
+
+        //    await  transporter.sendMail(mailOptions, (err, info) => {
+        //         if(err) {
+        //             console.log(err);
+        //         }else{
+        //             console.log("email has sent");
+        //         }
+        //     })
+        //     res.json(newUser);
          
         } catch (error) {
             console.log(error)
@@ -36,21 +54,28 @@ class UserAuth {
 
     static async signIn(req , res ) {
 
+        const {email,password} = req.body;
+
         try {
-            const {email, password} = req.body;
+          
             const user = await User.findOne({email: email});
-
-            if( !user || user.password !== password )  return res.status(404).json({message: "Invalid  email"});
             
-            if( !user.veryfied )  return res.status(404).json({message: "Email is not verifyed" });
-
-            const token = createToken(user);
-            res.cookie("access-token", token);
-            res.json(user)
+            if (!user || user.password !== password)  return res.status(404).json({message: "Invalid username"})
+         
+            const token = createToken(user.id)
+            res.cookie("token", token); 
+            res.send(user)
 
         } catch (error) {
             console.log(error);
         }
+
+    }
+
+    static logOut (req, res)  { 
+        res.clearCookie("token") 
+        res.json({message: "you have been logged out"})
+        res.redirect("/login") 
     }
 }
 
