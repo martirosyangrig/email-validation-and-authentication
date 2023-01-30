@@ -8,16 +8,15 @@ async function isEmailValid(email) {
 
 class UserAuth {
 
-    static  async signup(req, res) {
+    static  async signUp(req, res) {
 
         const {email, password} = req.body;
 
-        if(!email || !password) return res.json({message: "there is no email or password"});
+        if(!email || !password) return res.status(402).json({message: "there is no email or password"});
 
         const { valid } = await isEmailValid(email);
 
         if ( !valid ) return res.status(404).json("Ther is not such an email");
-
 
         try {
             const user = new User({
@@ -27,26 +26,28 @@ class UserAuth {
             });
 
             const newUser = await user.save();
-            res.json(newUser)
+            res.json(newUser);
          
-            
         } catch (error) {
-            
+            console.log(error)
         }
 
     }
 
-    static async login(req , res ) {
+    static async signIn(req , res ) {
 
         try {
             const {email, password} = req.body;
             const user = await User.findOne({email: email});
 
-            if(!user || user.password !== password) return res.status(404).json({message: "Invalid  email"});
-
-            const token = createToken(user)
-            res.cookie("access-token", token)
+            if( !user || user.password !== password )  return res.status(404).json({message: "Invalid  email"});
             
+            if( !user.veryfied )  return res.status(404).json({message: "Email is not verifyed" });
+
+            const token = createToken(user);
+            res.cookie("access-token", token);
+            res.json(user)
+
         } catch (error) {
             console.log(error);
         }
