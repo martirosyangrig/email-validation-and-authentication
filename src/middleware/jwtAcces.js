@@ -6,7 +6,6 @@ class UserAccess {
     static async isLogIn(req, res, next) {
         const accessToken = req.cookies["token"]
 
-        console.log(accessToken);
         if(!accessToken) return res.status(403).json({message: "Accsess denied, pls log in"});
 
         const validUser = await jwt.verify(accessToken, process.env.JWT_SECRET);
@@ -36,7 +35,7 @@ class UserAccess {
 
             if (!user) return next();
 
-            res.status(404).message({message: "This email is already used"})
+            res.status(404).json({message: "This email is already used"})
 
         } catch (error) {
             console.log(error);
