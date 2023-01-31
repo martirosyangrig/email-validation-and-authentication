@@ -10,8 +10,6 @@ app.use(express.json());
 
 app.use("/", UserRouter)
 
-
-
 mongoose
 .connect("mongodb+srv://admin:admin@cluster0.b30j5kf.mongodb.net/?retryWrites=true&w=majority")
 .then(()=>{

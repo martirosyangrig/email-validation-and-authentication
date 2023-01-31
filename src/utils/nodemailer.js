@@ -10,7 +10,6 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-
 async function sendEmail(newUser, url) {
     await transporter.sendMail({
         from: "grigor.martirosyan2000@mail.ru",

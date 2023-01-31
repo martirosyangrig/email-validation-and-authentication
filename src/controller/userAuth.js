@@ -51,7 +51,7 @@ class UserAuth {
             
             if (!user || user.password !== password || !user.veryfied)  return res.status(404).json({message: "Invalid username"})
          
-            const token = createToken(user.id)
+            const token = createToken(user.id);
             res.cookie("token", token); 
             res.send(user)
 
@@ -62,15 +62,12 @@ class UserAuth {
     }
 
     static logOut (req, res)  {
-
         res.clearCookie("token") 
         res.json({message: "you have been logged out"})
         res.redirect("/login")
-
     }
     
     static async verifyEmail(req, res) {
-        
         try {
 
             const token = req.params.id;

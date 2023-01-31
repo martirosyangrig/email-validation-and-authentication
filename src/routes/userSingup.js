@@ -2,8 +2,7 @@ const express = require("express")
 const router = express.Router();
 const UserAuth = require("../controller/userAuth");
 const UserAccess = require("../middleware/jwtAcces");
-const nodemailer = require("nodemailer");
-const jwt = require("jsonwebtoken");
+
 
 
 router.post("/signup", UserAccess.chekRegisteredEmail ,UserAuth.signUp);
